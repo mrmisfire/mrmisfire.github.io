@@ -11,7 +11,7 @@
     <meta property="og:url" content="https://dayattherac.es/" />
     <meta property="og:image" content="/images/DayAtTheRacesImg.png" />
     <meta property="og:type" content="website" />
-    <meta name="twitter:card" content="summary_large_image"/>
+    <meta name="twitter:card" content="summary"/>
     <meta name="twitter:image" content="/images/DayAtTheRacesImg.png"/>
     <meta name="twitter:title" content="Simulate Races with this Random Name Picker"/>
     <meta name="twitter:description" content="Free random name picker. Watch your choices race against one another. Simulate fully customisable races to decide a random winner."/>
@@ -24,15 +24,15 @@
 
         //Thank you for taking the time to snoop into my code. This is my first complete project since I started teaching myself Javascript.
         
-        let raceTimer
-        let indivOdds = false
-        let allRacers = []
-        let segments = []
-        let winners = []
-        let racersInput = 2
-        let segmentsInput = 15
-        let timeDelayInput = 1000
-        let successCheckInput = 0.5
+        let raceTimer;
+        let indivOdds = false;
+        let allRacers = [];
+        let segments = [];
+        let winners = [];
+        let racersInput = 2;
+        let segmentsInput = 15;
+        let timeDelayInput = 1000;
+        let successCheckInput = 0.5;
         
         //Hides the success input field when individual odds are selected
         //Shows a warning message when individual odds are selected
@@ -397,7 +397,7 @@
             background-color:lightgray;
         }
         .lane_content {
-            font-size: 3em;
+            font-size: 4vw;
             overflow: hidden;
             text-overflow: ellipsis;
             word-wrap: break-word;
@@ -423,6 +423,7 @@
         }
         .lane_racer_name {
             font-weight: bold;
+            font-size: 1.5vw;
         }
         .error_space {
             font-weight: bold;
@@ -475,6 +476,9 @@
             text-overflow: ellipsis;
             word-wrap: break-word;
             }
+        .lane_racer_name {
+            font-size: 10px;
+        }
         }
     </style>
 </head>
