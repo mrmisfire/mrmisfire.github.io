@@ -43,24 +43,28 @@
         //Shows a warning message when individual odds are selected
         function toggleSuccessInput() {
             let successSpace = document.getElementById("success_input_space");
+            let percSpace = document.getElementById("perc_space");
             let oddsError = document.getElementById("odds_warning");
             
             radioValue = document.getElementById("same_odds").checked;
             indivPercent = document.getElementById("indiv_percent").checked;
             if (radioValue === true) {
                 successSpace.style.display = "block";
+                percSpace.style.display = "none";
                 oddsError.style.display = "none";
                 indivOdds = false;
                 indivPerc = false;
             }
             else if (indivPercent === true) {
                 successSpace.style.display = "none";
+                percSpace.style.display = "block";
                 oddsError.style.display = "none";
                 indivOdds = false;
                 indivPerc = true;
             }
             else {
                 successSpace.style.display = "none";
+                percSpace.style.display = "none";
                 oddsError.style.display = "block";
                 indivOdds = true;
                 indivPerc = false;
@@ -654,6 +658,7 @@
             <br>
             <input type="number" id="success_input" name="success_input" value="50" min="1" max="100" style="width: 50px;" onchange="validateValues();">
             </div>
+            <div id="perc_space" style="display: none;"><br><br></div>
             <div id="odds_warning" style="display: none;"><span class="warning"><i>Warning! Experimental and somewhat inaccurate!</i></span><br><br></div>
             <br>
             <br>
