@@ -29,6 +29,7 @@
         //Thank you for taking the time to snoop into my code. This is my first complete project since I started teaching myself Javascript.
         
         let raceTimer;
+        let lightMode = false;
         let indivOdds = false;
         let indivPerc = false;
         let allRacers = [];
@@ -96,6 +97,14 @@
             }
             else if (timeDelayInputCheck.value < 0.01) {
                 timeDelayInputCheck.value = 0.01;
+            }
+            else if (timeDelayInputCheck.value > 3) {
+                document.getElementById("time_warning").style.display = "block";
+                document.getElementById("time_space").style.display = "none";
+            }
+            else {
+                document.getElementById("time_warning").style.display = "none";
+                document.getElementById("time_space").style.display = "block";
             }
 
             let successCheckInputCheck = document.getElementById("success_input");
@@ -457,9 +466,34 @@
         }
 
         //Toggles between dark mode and light mode
+        //Saves choice to Local Storage
         function toggleDisplayMode () {
             let body = document.body;
-            body.classList.toggle("light_mode");
+            if (lightMode === false) {
+                body.classList.add("light_mode");
+                lightMode = true;
+                localStorage.setItem("mode", "light");
+            }
+            else {
+                body.classList.remove("light_mode");
+                lightMode = false;
+                localStorage.setItem("mode", "dark");
+            }
+        }
+
+        //Loads light/dark mode from Local Storage
+        function loadMode() {
+            let mode = localStorage.getItem("mode");
+            let body = document.body;
+            console.log(mode);
+            if (mode === "light") {
+                body.classList.add("light_mode");
+                lightMode = true;
+            }
+            else if (mode === "dark") {
+                body.classList.remove("light_mode");
+                lightMode = false;
+            }
         }
 
     </script>
@@ -676,7 +710,8 @@
             <label for="interval_input">Interval Time (Seconds):</label>
             <br>
             <input type="number" id="interval_input" name="interval_input" value="1" min="0.01" step="0.01" style="width: 50px;" onchange="validateValues();">
-            <br>
+            <div id="time_warning" style="display: none;"><span class="warning"><i>Warning! Race may take a while. You probably want to keep this under 3 Seconds or so.</i></span></div>
+            <div id="time_space"><br><br></div>
             <br>
             <input type="radio" id="same_odds" name="odds_radio" value="same" onclick="javascript:toggleSuccessInput()" checked>
             <label for="same_odds">Same odds for all racers</label>
@@ -716,6 +751,8 @@
         else {
             console.log("Compatible browser detected");
         }
+
+        loadMode();
     </script>
 </body>
 </html>
