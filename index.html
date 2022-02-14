@@ -337,6 +337,17 @@
         //The racer with the highest randomCheck value is printed in the winner announcement section
         //Scrolls screen to winner announcement section
         function stopRace() {
+            for (i = 0; i < allRacers.length; i++) {
+                for (x = 0; x < allRacers[i].Segments.length; x++) {
+                    if (allRacers[i].Segments[x].Status === "success") {
+                        allRacers[i].Segments[x].Status = "full";
+                    }
+                    else if (allRacers[i].Segments[x].Status === "fail") {
+                        allRacers[i].Segments[x].Status = "empty";
+                    }
+                }
+            }
+            renderLanes();
             console.log("Race finish!");
             clearInterval(raceTimer);
             console.log("Final state of racers...");
