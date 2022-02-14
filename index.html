@@ -404,6 +404,9 @@
                             break;
                         }
                     }
+                    else if (allRacers[i].Segments[x].Status === "success") {
+                        allRacers[i].Segments[x].Status = "full";
+                    }
                 }
             }
             for (i = 0; i < allRacers.length; i++) {
@@ -431,6 +434,9 @@
                     else if (allRacers[i].Segments[x].Status === "fail") {
                         laneSpace.innerHTML += `<span class="segment_fail">■</span>`;
                     }
+                    else if (allRacers[i].Segments[x].Status === "success") {
+                        laneSpace.innerHTML += `<span class="segment_success">■</span>`;
+                    }
                     else {
                         //laneSpace.innerHTML += `<span class="segment_full">☒;</span>`;
                         laneSpace.innerHTML += `<span class="segment_full">■</span>`;
@@ -454,6 +460,14 @@
         @keyframes fail_light {
             from {color: crimson;}
             to {color: lightgray;}
+        }
+        @keyframes success {
+            from {color: #FFD25A;}
+            to {color: #35CE8D;}
+        }
+        @keyframes success_light {
+            from {color: yellow;}
+            to {color: green;}
         }
         body {
             background-color:#202020;
@@ -528,6 +542,11 @@
             animation-name: fail;
             animation-duration: 1s;
         }
+        .segment_success {
+            color: #35CE8D;
+            animation-name: success;
+            animation-duration: 2s;
+        }
         .segment_full {
             color: #35CE8D;
         }
@@ -578,6 +597,11 @@
             color: lightgray;
             animation-name: fail_light;
             animation-duration: 1s;
+        }
+        .light_mode .segment_success {
+            color: green;
+            animation-name: success_light;
+            animation-duration: 2s;
         }
         .light_mode .segment_full{
             color: green;
