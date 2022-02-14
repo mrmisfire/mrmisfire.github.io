@@ -20,12 +20,17 @@
     <link rel="icon" type="image/x-icon" href="/images/DayAtTheRacesIco.ico">
     <script language="JavaScript">
         
-        //Day at the Races V1.0 - Callum West © 2022
+        //Day at the Races v1.1 - Callum West © 2022
+        //v1.1 Changes
+        //*Added data validation function that fires when input values are changed
+        //*Added option for individual racer odds in the percentage format
+        //*Added animation for fail state
 
         //Thank you for taking the time to snoop into my code. This is my first complete project since I started teaching myself Javascript.
         
         let raceTimer;
         let indivOdds = false;
+        let indivPerc = false;
         let allRacers = [];
         let segments = [];
         let winners = [];
@@ -41,24 +46,75 @@
             let oddsError = document.getElementById("odds_warning");
             
             radioValue = document.getElementById("same_odds").checked;
+            indivPercent = document.getElementById("indiv_percent").checked;
             if (radioValue === true) {
                 successSpace.style.display = "block";
                 oddsError.style.display = "none";
                 indivOdds = false;
+                indivPerc = false;
+            }
+            else if (indivPercent === true) {
+                successSpace.style.display = "none";
+                oddsError.style.display = "none";
+                indivOdds = false;
+                indivPerc = true;
             }
             else {
                 successSpace.style.display = "none";
                 oddsError.style.display = "block";
                 indivOdds = true;
+                indivPerc = false;
+            }
+        }
+
+        //Checks if data is valid within the min/max ranges set
+        //If data isn't valid, it's automatically set to the nearest valid value
+        function validateValues() {
+            let racersInputCheck = document.getElementById("racer_num_input");
+            if (racersInputCheck.value === "") {
+                racersInputCheck.value = 1;
+            }
+            else if (racersInputCheck.value < 1) {
+                racersInputCheck.value = 1;
+            }
+
+            let segmentsInputCheck = document.getElementById("segment_num_input");
+            if (segmentsInputCheck.value === "") {
+                segmentsInputCheck.value = 1;
+            }
+            else if (segmentsInputCheck.value < 1) {
+                segmentsInputCheck.value = 1;
+            }
+
+            let timeDelayInputCheck = document.getElementById("interval_input");
+            if (timeDelayInputCheck.value === "") {
+                timeDelayInputCheck.value = 0.01;
+            }
+            else if (timeDelayInputCheck.value < 0.01) {
+                timeDelayInputCheck.value = 0.01;
+            }
+
+            let successCheckInputCheck = document.getElementById("success_input");
+            if (successCheckInputCheck.value === "") {
+                successCheckInputCheck.value = 1;
+            }
+            else if (successCheckInputCheck.value < 1) {
+                successCheckInputCheck.value = 1;
+            }
+            else if (successCheckInputCheck.value > 100) {
+                successCheckInputCheck.value = 100;
             }
         }
 
         //Prints error message for settings input
+        //No longer required with data validation function
+        /*
         function printSettingsError() {
             console.log("Invalid values entered");
             let errorSpace = document.getElementById("error_box");
             errorSpace.innerText = "Please enter valid values!";
         }
+        */
 
         //Prints error message for odds input
         function printOddsError() {
@@ -69,7 +125,7 @@
 
         //Sets input variables to user input
         //Checks all user values are valid
-        //If values are valid, prints name input fields for each racer
+        //If values are valid, prints name input fields for each racer (No longer required for v1.1)
         //If individual odds are selected, prints odds value fields for each racer
         //Hides the settings section
         function generateNameInput() {
@@ -77,7 +133,7 @@
             segmentsInput = document.getElementById("segment_num_input").value;
             timeDelayInput = document.getElementById("interval_input").value * 1000;
             successCheckInput = ( 100 - document.getElementById("success_input").value ) / 100;
-
+            /*
             if (racersInput < 1) {
                 printSettingsError();
             }
@@ -94,7 +150,7 @@
                 printSettingsError();
             }
             else {
-
+            */
             let inputSpace = document.getElementById("name_input");
             document.getElementById("control_space").style.display = "none";
             inputSpace.innerHTML = `<h4>Racer Name Entry</h4>`
@@ -103,17 +159,55 @@
                 <label for="racer_name_${i+1}">Name of Racer ${i+1}:</label>
                 <br>
                 <input type="text" class="name_slot" id="racer_name_${i+1}" name="racer_name_${i+1}" value="Racer ${i+1}" maxlength="70" style="width: 250px;">`;
-                if (indivOdds === true) {
-                    inputSpace.innerHTML += `<span> Odds:</span><input type="number" id="racer_odds_${i+1}" name="racer_odds_${i+1}" value="1" min="0.01" step="0.01" style="width: 50px;"><span>/1</span>`;
+                if (indivPerc === true) {
+                    inputSpace.innerHTML += `<span> Success Rate:</span><input type="number" id="racer_perc_${i+1}" name="racer_perc_${i+1}" value="50" min="1" max="100" style="width: 50px;" onchange="validatePercValues();"><span>%</span>`;
+                }
+                else if (indivOdds === true) {
+                    inputSpace.innerHTML += `<span> Odds:</span><input type="number" id="racer_odds_${i+1}" name="racer_odds_${i+1}" value="1" min="0.01" step="0.01" style="width: 50px;" onchange="validateOddsValues();"><span>/1</span>`;
                 }
                 inputSpace.innerHTML += `<br><br>`;
                 console.log("Generating name input " + (i+1));
             }
             inputSpace.innerHTML += `<br><p id="error_box_odds" class="error_space"></p><button type="button" onclick="javascript:oddsCheck();">Enter Racers</button>`;
         }
+        //}
+
+        //Checks if data is valid within the min/max ranges set
+        //If data isn't valid, it's automatically set to the nearest valid value
+        function validatePercValues() {
+            for (let i = 0; i < racersInput; i++) {
+                let input = document.getElementById("racer_perc_" + (i + 1));
+                if (input.value === "") {
+                    input.value = 1;
+                }
+                else if (input.value < 1) {
+                    input.value = 1;
+                }
+                else if (input.value > 100) {
+                    input.value = 100;
+                }
+            }
         }
 
+        //Checks if data is valid within the min/max ranges set
+        //If data isn't valid, it's automatically set to the nearest valid value
+        function validateOddsValues() {
+            for (let i = 0; i < racersInput; i++) {
+                let input = document.getElementById("racer_odds_" + (i + 1));
+                if (input.value === "") {
+                    input.value = 1;
+                }
+                else if (input.value < 0.01) {
+                    input.value = 0.01;
+                }
+            }
+        }
+
+        //Checks if indicidual odd values are valid and generates race
+        //If not, prints an error message
+        //Not required for v1.1
         function oddsCheck() {
+            /*
             if (indivOdds === true) {
                 let invalidChecker = 0
                 for(let i = 0; i < racersInput; i++) {
@@ -134,6 +228,8 @@
             else {
                 generateRace();
             }
+            */
+            generateRace();
         }
         
         //Empties winner array in case of repeat race
@@ -177,14 +273,19 @@
 
                 let segment = generateSegments();
 
-                if (indivOdds === false) {
-                    randomNum = successCheckInput
+                if (indivPerc === true) {
+                    let percSlot = "racer_perc_" + (i+1);
+                    let percOdds = document.getElementById(percSlot).value;
+                    randomNum = (100 - percOdds) / 100;
                 }
-                else {
+                else if (indivOdds === true) {
                     let oddsSlot = "racer_odds_" + (i+1);
                     let rawOdds = document.getElementById(oddsSlot).value;
                     let convOdds = 1 / (rawOdds + 1);
                     randomNum = 1 - ( convOdds ** (1/segmentsInput) );
+                }
+                else {
+                    randomNum = successCheckInput;
                 }
 
                 let racer = {Name: name, Segments: segment, Odds: randomNum, Success: 0};
@@ -198,7 +299,7 @@
             function generateSegments() {
             let segment = new Array ();
             for(let i = 0; i < segmentsInput; i++) {
-                let chunk = {Status: false};
+                let chunk = {Status: "empty"};
                 segment.push(chunk);
             }
             return segment;
@@ -239,7 +340,7 @@
             let winnerCounter = 0
             for (i = 0; i < allRacers.length; i++) {
                 let lastSegment = allRacers[i].Segments.length - 1;
-                if (allRacers[i].Segments[lastSegment].Status === true) {
+                if (allRacers[i].Segments[lastSegment].Status === "success") {
                     winnerCounter ++;
                     let winner = {Name: allRacers[i].Name, Success: allRacers[i].Success}
                     winners.push(winner);
@@ -284,16 +385,17 @@
             for (i = 0; i < allRacers.length; i++) {
                 for (x = 0; x < allRacers[i].Segments.length; x++) {
                     
-                    if (allRacers[i].Segments[x].Status === false) {
+                    if (allRacers[i].Segments[x].Status === "empty" || allRacers[i].Segments[x].Status === "fail") {
                         let randomCheck = Math.random();
                         allRacers[i].Success = randomCheck;
 
                         if (randomCheck > allRacers[i].Odds ) {
-                            allRacers[i].Segments[x].Status = true;
+                            allRacers[i].Segments[x].Status = "success";
                             console.log(allRacers[i].Name + " scores " + randomCheck + " - Success!");
                             break;
                         }
                         else {
+                            allRacers[i].Segments[x].Status = "fail";
                             console.log(allRacers[i].Name + " scores " + randomCheck + " - Fail!");
                             break;
                         }
@@ -302,7 +404,7 @@
             }
             for (i = 0; i < allRacers.length; i++) {
                 let lastSegment = allRacers[i].Segments.length - 1;
-                if (allRacers[i].Segments[lastSegment].Status === true) {
+                if (allRacers[i].Segments[lastSegment].Status === "success") {
                     stopRace();
                     break;
                     }
@@ -317,10 +419,13 @@
                 let laneSpace = document.getElementById(laneNumber);
                 laneSpace.innerHTML = ""
                 for (let x = 0; x < allRacers[i].Segments.length; x++) {
-                    if (allRacers[i].Segments[x].Status === false) {
+                    if (allRacers[i].Segments[x].Status === "empty") {
                         //Initial symbols for segments - Rendered as ugly emojis on some phones (namely mine)
                         //laneSpace.innerHTML += `<span class="segment_empty">☐;</span>`;
                         laneSpace.innerHTML += `<span class="segment_empty">■</span>`;
+                    }
+                    else if (allRacers[i].Segments[x].Status === "fail") {
+                        laneSpace.innerHTML += `<span class="segment_fail">■</span>`;
                     }
                     else {
                         //laneSpace.innerHTML += `<span class="segment_full">☒;</span>`;
@@ -338,6 +443,14 @@
 
     </script>
     <style>
+        @keyframes fail {
+            from {color: #FF70A6;}
+            to {color: gray;}
+        }
+        @keyframes fail_light {
+            from {color: crimson;}
+            to {color: lightgray;}
+        }
         body {
             background-color:#202020;
             color: white;
@@ -363,6 +476,7 @@
             margin: 40px auto;
             padding: 0 40px;
             box-sizing: border-box;
+            font-size: 16px;
         }
         footer {
             position:fixed;
@@ -397,13 +511,18 @@
             background-color:lightgray;
         }
         .lane_content {
-            font-size: 4vw;
+            font-size: 3.1em;
             overflow: hidden;
             text-overflow: ellipsis;
             word-wrap: break-word;
             }
         .segment_empty {
             color: gray;
+        }
+        .segment_fail {
+            color: gray;
+            animation-name: fail;
+            animation-duration: 1s;
         }
         .segment_full {
             color: #35CE8D;
@@ -423,7 +542,7 @@
         }
         .lane_racer_name {
             font-weight: bold;
-            font-size: 1.5vw;
+            font-size: 1.5em;
         }
         .error_space {
             font-weight: bold;
@@ -443,13 +562,18 @@
             color: black;
         }
         .light_mode .error_space{
-            color: red;
+            color: crimson;
         }
         .light_mode .warning{
-            color: red;
+            color: crimson;
         }
         .light_mode .segment_empty {
             color: lightgray;
+        }
+        .light_mode .segment_fail {
+            color: lightgray;
+            animation-name: fail_light;
+            animation-duration: 1s;
         }
         .light_mode .segment_full{
             color: green;
@@ -462,6 +586,11 @@
             font-size: 3em;
             color: green;
         }
+        @media screen and (max-width: 696px){
+        .lane_content {
+            font-size: 2.5em;
+        }
+        }
         @media screen and (max-width: 600px){
         header{
             margin: 10px auto;
@@ -470,6 +599,9 @@
         main {
             padding: 0 5px;
         }
+        footer {
+            width:94%;
+        }
         .lane_content {
             font-size: 1.5em;
             overflow: hidden;
@@ -477,7 +609,7 @@
             word-wrap: break-word;
             }
         .lane_racer_name {
-            font-size: 14px;
+            font-size: 10px;
         }
         }
     </style>
@@ -494,30 +626,33 @@
             <h4>Race Settings</h4>
             <label for="racer_num_input">Number of Racers:</label>
             <br>
-            <input type="number" id="racer_num_input" name="racer_num_input" value="2" min="1" style="width: 50px;">
+            <input type="number" id="racer_num_input" name="racer_num_input" value="2" min="1" style="width: 50px;" onchange="validateValues();">
             <br>
             <br>
             <label for="segment_num_input">Race Length:</label>
             <br>
-            <input type="number" id="segment_num_input" name="segment_num_input" value="15" min="1" style="width: 50px;">
+            <input type="number" id="segment_num_input" name="segment_num_input" value="15" min="1" style="width: 50px;" onchange="validateValues();">
             <br>
             <br>
             <label for="interval_input">Interval Time (Seconds):</label>
             <br>
-            <input type="number" id="interval_input" name="interval_input" value="1" min="0.01" step="0.01" style="width: 50px;">
+            <input type="number" id="interval_input" name="interval_input" value="1" min="0.01" step="0.01" style="width: 50px;" onchange="validateValues();">
             <br>
             <br>
             <input type="radio" id="same_odds" name="odds_radio" value="same" onclick="javascript:toggleSuccessInput()" checked>
             <label for="same_odds">Same odds for all racers</label>
             <br>
+            <input type="radio" id="indiv_percent" name="odds_radio" value="indivperc" onclick="javascript:toggleSuccessInput()">
+            <label for="indiv_percent">Individual odds for racers (%)</label>
+            <br>
             <input type="radio" id="indiv_odds" name="odds_radio" value="indiv" onclick="javascript:toggleSuccessInput()">
-            <label for="indiv_odds">Individual odds for racers</label>
+            <label for="indiv_odds">Individual odds for racers (Racing Odds)</label>
             <br>
             <br>
             <div id="success_input_space">
             <label for="success_input">Interval Success Chance (%):</label>
             <br>
-            <input type="number" id="success_input" name="success_input" value="50" min="1" max="100" style="width: 50px;">
+            <input type="number" id="success_input" name="success_input" value="50" min="1" max="100" style="width: 50px;" onchange="validateValues();">
             </div>
             <div id="odds_warning" style="display: none;"><span class="warning"><i>Warning! Experimental and somewhat inaccurate!</i></span><br><br></div>
             <br>
