@@ -361,16 +361,9 @@
             }
             console.log("Racers who made it to the end...");
             console.log(winners);
-            for (i = 0; i < allRacers.length; i++) {
-                for (x = 0; x < allRacers[i].Segments.length; x++) {
-                    if (allRacers[i].Segments[x].Status === "success") {
-                        allRacers[i].Segments[x].Status = "full";
-                    }
-                    else if (allRacers[i].Segments[x].Status === "fail") {
-                        allRacers[i].Segments[x].Status = "empty";
-                    }
-                }
-            }
+
+            setTimeout(stopAnim, 2000);
+            
             renderLanes();
             let winnerSpace = document.getElementById("announce_winner");
             if (winnerCounter === 1) {
@@ -395,6 +388,20 @@
             }
             //Enable for infinite race loop
             //generateRace();
+        }
+
+        function stopAnim() {
+            for (i = 0; i < allRacers.length; i++) {
+                for (x = 0; x < allRacers[i].Segments.length; x++) {
+                    if (allRacers[i].Segments[x].Status === "success") {
+                        allRacers[i].Segments[x].Status = "full";
+                    }
+                    else if (allRacers[i].Segments[x].Status === "fail") {
+                        allRacers[i].Segments[x].Status = "empty";
+                    }
+                }
+            }
+            renderLanes();
         }
 
         //Loops through each track segment of each racer
